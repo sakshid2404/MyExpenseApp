@@ -1,0 +1,13 @@
+ <center><br><br><br>
+<div class="container mt-4">
+  <h2 class="mb-3">➕ Add Expense</h2>
+ 
+  <form method="post" class="card p-4 shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">💾 Save</button><br><br>
+    <a href="{% url 'expense-list' %}" class="btn btn-secondary">⬅ Back</a>
+  </form>
+</div>
+</center>
+
