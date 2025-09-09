@@ -1,13 +1,88 @@
- <center><br><br><br>
-<div class="container mt-4">
-  <h2 class="mb-3">➕ Add Expense</h2>
- 
-  <form method="post" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">💾 Save</button><br><br>
-    <a href="{% url 'expense-list' %}" class="btn btn-secondary">⬅ Back</a>
-  </form>
-</div>
-</center>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Expense</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      border-radius: 1.2rem;
+    }
+    .card-header {
+      background: #0d6efd;
+      color: white;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      border-top-left-radius: 1.2rem;
+      border-top-right-radius: 1.2rem;
+    }
+    .btn {
+      border-radius: 0.8rem;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
+    }
+    label {
+      font-weight: 600;
+    }
+    input, select, textarea {
+      border-radius: 0.6rem !important;
+    }
+    .form-error {
+      font-size: 0.9rem;
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0">
+        
+        <!-- Header -->
+        <div class="card-header">
+          ➕ Add Expense
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="form-error">
+                    {{ field.errors|striptags }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{% url 'expense-list' %}" class="btn btn-outline-secondary">⬅ Back</a>
+              <button type="submit" class="btn btn-success">💾 Save</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

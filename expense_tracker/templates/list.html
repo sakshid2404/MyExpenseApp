@@ -13,7 +13,7 @@
     .expense-header {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      padding: 40px 20px;
+      padding: 20px 20px;
       border-radius: 16px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
       text-align: center;
@@ -90,6 +90,22 @@
       <h1 class="fw-bold">💰 Expense Tracker</h1>
     </div>
 
+    <form method="get" class="mb-4 d-flex align-items-center">
+
+            <label for="date" class="me-2 fw-bold">Filter by Date:</label>
+            <input type="date" name="date" id="date"
+                   value="{{ request.GET.date }}"
+                   class="form-control w-auto">
+
+            <label for="category" class="me-2 fw-bold">Filter by Category:</label>
+            <input type="text" name="category" id="category"
+                   value="{{ request.GET.category }}"
+                   class="form-control w-auto">
+
+            <button type="submit" class="btn btn-primary ms-2">Filter</button>
+            <a href="{% url 'expense-list' %}" class="btn btn-secondary ms-2">Reset</a>
+        </form>
+        
     <!-- Add Button -->
     <div class="d-flex justify-content-end mb-3">
       <a href="{% url 'expense-add' %}" class="btn btn-success btn-custom">➕ Add Expense</a>

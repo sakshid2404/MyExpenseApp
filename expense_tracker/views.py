@@ -11,10 +11,18 @@ class ExpenseListView(ListView):
     context_object_name = "expenses"
     ordering = ["-created_at"] 
     
+  
     def get_queryset(self):
-        today = timezone.now().date()  
-        return Expense.objects.filter(created_at__date=today).order_by("-created_at")
-
+        queryset = super().get_queryset()
+        date = self.request.GET.get("date")
+        category = self.request.GET.get("category")
+        if date:  
+            queryset = queryset.filter(created_at__date=date)
+        if category:  
+            queryset = queryset.filter(category=category)
+        return queryset
+    
+    
     def get_context_data(self, **kwargs) :
         data = super().get_context_data(**kwargs)
         total = self.get_queryset().aggregate(
@@ -28,7 +36,7 @@ class ExpenseListView(ListView):
 class ExpenseCreateView(CreateView):
     model = Expense
     template_name = "create.html"
-    fields = ["category", "name", "amount", "quantity", 'unit','pay_type']
+    fields = "__all__"
     success_url = reverse_lazy("expense-list")
 
 
