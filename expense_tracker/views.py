@@ -1,4 +1,3 @@
-from django.utils import timezone
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from .models import Expense
