@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      background: #eef2f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container {
+        max-width: 1100px;
+    }
+
+    /* Header */
+    .expense-header {
+      background: linear-gradient(90deg, #6a82fb, #00C6FF);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .expense-header h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .expense-header .fa-wallet {
+      font-size: 2.5rem;
+    }
+    .expense-header h1::before {
+        content: "💰";
+        margin-right: 10px;
+    }
+
+    /* Controls and Buttons */
+    .controls-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 20px 0;
+    }
+    .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+    .filter-row .form-control, .filter-row .form-select {
+        width: auto;
+        min-width: 150px;
+    }
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .btn-budgets {
+      background-color: #28a745;
+      color: white;
+      font-weight: 600;
+    }
+    .btn-budgets:hover {
+      background-color: #218838;
+      color: white;
+    }
+    .btn-add {
+      background-color: #17a2b8;
+      color: white;
+      font-weight: 600;
+    }
+    .btn-add:hover {
+      background-color: #138496;
+      color: white;
+    }
+
+    /* Table */
+    .table-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 0;
+      overflow: hidden;
+    }
+    .table thead th {
+      background-color: #343a40;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      border-top: none;
+    }
+    .table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+    .table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    .table td, .table th {
+      padding: 15px;
+    }
+    .table .category-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .table .category-link:hover {
+        text-decoration: underline;
+    }
+    .table .badge {
+        background-color: #cfe2ff !important;
+        color: #084298 !important;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 12px;
+    }
+
+    /* Total Section */
+    .total-box {
+      background: linear-gradient(90deg, #17a2b8, #28a745);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container my-4">
+
+    <div class="expense-header">
+      <h1>Expense Tracker</h1>
+    </div>
+
+    <div class="controls-container">
+      <div class="action-buttons">
+        <a href="/budgets" class="btn btn-budgets">Budgets</a>
+        <a href="{% url 'expense-add' %}" class="btn btn-add">
+            <i class="fas fa-plus"></i> Add Expense
+        </a>
+      </div>
+      <form method="get" class="filter-row">
+        <label for="search" class="fw-bold">Search:</label>
+        <input type="search" name="search" id="search"
+               value="{{ request.GET.search }}"
+               class="form-control" placeholder="Search...">
+
+        <label for="date" class="fw-bold">Filter by Date:</label>
+            <input type="date" name="date" id="date"
+                   value="{{ request.GET.date }}"
+                   class="form-control w-auto">
+            
+                    
+        <label for="category" class="fw-bold">Filter by Category:</label>
+          <select name="category" class="form-select">
+            
+             <option value="">--select--</option>
+              {% for i in category %}
+
+             <option {% if request.GET.category == i %}selected{% endif %}>{{ i }}</option>
+              
+              {% endfor %}
+          </select>
+         
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+        <a href="{% url 'expense-list' %}" class="btn btn-secondary">Reset</a>
+      </form>
+    </div>
+  
+    <div class="table-container">
+      <table class="table table-hover align-middle text-center mb-0">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Name</th>
+            <th>Amount (₹)</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Pay-Type</th>
+            <th>Total (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for expense in expenses %}
+          <tr>
+            <td>{{ expense.created_at }}</td>
+            <td><a href="#" class="category-link">{{ expense.category }}</a></td>
+            <td>{{ expense.name }}</td>
+            <td>₹ {{ expense.amount }}</td>
+            <td>{{ expense.quantity }}</td>
+            <td>{{ expense.unit }}</td>
+            <td>{{ expense.pay_type }}</td>
+            <td>₹ {{ expense.total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center text-muted">No expenses yet 🚫</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="total-box">
+        Total: ₹{{ total }}
+      </div>
+    </div>
+
+    <hr class="my-5">
+
+    <div class="table-container mt-5">
+      <h4 class="text-center mb-4">📊 Expenses by Category</h4>
+      <canvas id="expensePieChart" style="max-height:400px;"></canvas>
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctxPie = document.getElementById('expensePieChart').getContext('2d');
+
+  const pieData = {
+    labels: [
+      {% for item in category_totals %}
+        "{{ item.category|title }}",
+      {% endfor %}
+    ],
+    datasets: [{
+      data: [
+        {% for item in category_totals %}
+          {{ item.total }},
+        {% endfor %}
+      ],
+      backgroundColor: [
+        '#FF6384', '#36A2EB', '#FFCE56',
+        '#4BC0C0', '#9966FF', '#FF9F40',
+        '#2ECC71', '#E74C3C'
+      ]
+    }]
+  };
+
+  new Chart(ctxPie, {
+    type: 'pie',
+    data: pieData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

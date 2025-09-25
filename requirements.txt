@@ -1,0 +1,7 @@
+Django==5.1.1
+asgiref==3.8.1
+sqlparse==0.5.1
+tzdata==2025.1
+
+# If you use Pillow for image handling (recommended for Django projects)
+Pillow==11.0.0
